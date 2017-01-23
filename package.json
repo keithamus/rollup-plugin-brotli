@@ -1,11 +1,11 @@
 {
-  "name": "rollup-plugin-gzip",
+  "name": "rollup-plugin-brotli",
   "version": "1.0.0",
-  "description": "Compress your Rollup bundle with Gzip",
+  "description": "Compress your Rollup bundle with Brotli",
   "keywords": [
     "rollup",
     "rollup-plugin",
-    "gzip",
+    "brotli",
     "compress"
   ],
   "main": "./lib/index.cjs.js",
@@ -16,17 +16,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/kryops/rollup-plugin-gzip.git"
+    "url": "git+ssh://git@github.com/kryops/rollup-plugin-brotli.git"
   },
   "author": "Michael Strobel <michael@kryops.de>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kryops/rollup-plugin-gzip/issues"
+    "url": "https://github.com/kryops/rollup-plugin-brotli/issues"
   },
-  "homepage": "https://github.com/kryops/rollup-plugin-gzip#readme",
+  "homepage": "https://github.com/kryops/rollup-plugin-brotli#readme",
   "devDependencies": {
     "ava": "^0.17.0",
     "rimraf": "^2.5.4",
     "rollup": "^0.41.4"
+  },
+  "dependencies": {
+    "iltorb": "^1.0.13"
   }
 }

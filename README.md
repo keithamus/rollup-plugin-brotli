@@ -1,12 +1,13 @@
-# rollup-plugin-gzip
+# rollup-plugin-brotli
 
-Creates a compressed `.gz` artifact for your Rollup bundle.
+Creates a compressed `.br` artifact for your Rollup bundle.
 
+All credit goes to [@kryops](https://github.com/kryops) with https://github.com/kryops/rollup-plugin-gzip. This just changes `zlib` to `brotli` and adds the additional (`iltorb`) dependency.
 
 ## Installation
 
 ```
-npm install --save-dev rollup-plugin-gzip
+npm install --save-dev rollup-plugin-brotli
 ```
 
 
@@ -14,12 +15,12 @@ npm install --save-dev rollup-plugin-gzip
 
 ```js
 import {rollup} from "rollup";
-import gzip from "rollup-plugin-gzip";
+import brotli from "rollup-plugin-brotli";
 
 rollup({
     entry: 'src/index.js',
     plugins: [
-        gzip()
+        brotli()
     ]
 }).then(/* ... */)
 ```
@@ -27,9 +28,9 @@ rollup({
 ### Configuration
 
 ```js
-gzip({
+brotli({
     options: {
-        level: 9
+        mode: 0 // "generic mode"
         // ...
     },
     additional: [
@@ -39,15 +40,15 @@ gzip({
 })
 ```
 
-**options**: Gzip compression options
+**options**: Brotli compression options
 
-The options available are the [standard options for the zlib module](https://nodejs.org/api/zlib.html#zlib_class_options).
+The options available are the [standard options for the `iltorb` module](https://github.com/mayhemydg/iltorb#brotliparams).
 
 **additional**: Compress additional files
 
 This option allows you to compress additional files that were created by other Rollup plugins.
 
-As the `onwrite` callback for all plugins is executed in the same order they are listed in the `plugins` array, this might only work if the gzip plugin is positioned after all other plugins that create additional files.
+As the `onwrite` callback for all plugins is executed in the same order they are listed in the `plugins` array, this might only work if the brotli plugin is positioned after all other plugins that create additional files.
 
 **minSize**: Minimum size for compression
 

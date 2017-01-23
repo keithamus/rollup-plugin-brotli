@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as zlib from "zlib";
+import { decompress } from "iltorb";
 import test from 'ava';
 import rimraf from "rimraf";
 import * as rollup from "rollup";
@@ -30,14 +30,14 @@ function compareFileWithGzip(t, path) {
                 return;
             }
 
-            fs.readFile(path + '.gz', (err, gzipContent) => {
+            fs.readFile(path + '.br', (err, gzipContent) => {
                 if(err) {
                     t.fail('Gzip file not found!');
                     reject();
                     return;
                 }
 
-                zlib.gunzip(gzipContent, (err, unzippedContent) => {
+                decompress(gzipContent, (err, unzippedContent) => {
                     t.deepEqual(unzippedContent, bundleContent);
                     resolve();
                 });

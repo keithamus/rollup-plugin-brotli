@@ -1,11 +1,11 @@
-import zlib from 'zlib';
+import { compressStream } from 'iltorb';
 import fs from 'fs';
 
-function gzipCompressFile(file, options, minSize) {
+function brotliCompressFile(file, options, minSize) {
     return new Promise(resolve => {
         fs.stat(file, (err, stats) => {
             if(err) {
-                console.error('rollup-plugin-gzip: Error reading file ' + file);
+                console.error('rollup-plugin-brotli: Error reading file ' + file);
                 resolve();
                 return;
             }
@@ -15,23 +15,25 @@ function gzipCompressFile(file, options, minSize) {
             }
             else {
                 fs.createReadStream(file)
-                    .pipe(zlib.createGzip(options))
-                    .pipe(fs.createWriteStream(file + '.gz'))
+                    .pipe(compressStream(options))
+                    .pipe(fs.createWriteStream(file + '.br'))
                     .on('close', () => resolve());
             }
         });
     });
 }
 
-export default function gzip(options) {
+export default function brotli(options) {
     options = options || {};
 
-    const gzipOptions = options.options;
+    const brotliOptions = Object.assign({
+      mode: 1,
+    }, options.options || {});
     const additionalFiles = options.additional || [];
     const minSize = options.minSize || 0;
 
     return {
-        name: 'gzip',
+        name: 'brotli',
 
         onwrite: function(buildOpts, bundle) {
 
@@ -40,7 +42,7 @@ export default function gzip(options) {
             const filesToCompress = [ buildOpts.dest ].concat(additionalFiles);
 
             return Promise.all(filesToCompress.map(
-                file => gzipCompressFile(file, gzipOptions, minSize)));
+                file => brotliCompressFile(file, brotliOptions, minSize)));
         }
     };
 }
