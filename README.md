@@ -1,5 +1,7 @@
 # rollup-plugin-brotli
 
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/ygkcNhfZ9nTDeVM6P8LSGn1C/keithamus/rollup-plugin-brotli'>  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/ygkcNhfZ9nTDeVM6P8LSGn1C/keithamus/rollup-plugin-brotli.svg' /></a>
+
 Creates a compressed `.br` artifact for your Rollup bundle.
 
 All credit goes to [@kryops](https://github.com/kryops) with https://github.com/kryops/rollup-plugin-gzip. This just changes `zlib` to `brotli` and adds the additional (`iltorb`) dependency.
