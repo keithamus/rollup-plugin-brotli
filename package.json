@@ -12,7 +12,8 @@
   "jsnext:main": "./lib/index.es.js",
   "scripts": {
     "build": "rollup -c",
-    "test": "ava test/**/*.test.js"
+    "pretest": "npm run build",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -25,11 +26,12 @@
   },
   "homepage": "https://github.com/kryops/rollup-plugin-brotli#readme",
   "devDependencies": {
-    "ava": "^0.17.0",
+    "chai": "^4.1.2",
+    "mocha": "^5.1.0",
     "rimraf": "^2.5.4",
-    "rollup": "^0.41.4"
+    "rollup": "^0.57.1"
   },
   "dependencies": {
-    "iltorb": "^1.0.13"
+    "iltorb": "^2.3.0"
   }
 }

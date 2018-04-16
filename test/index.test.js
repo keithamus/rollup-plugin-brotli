@@ -1,117 +1,84 @@
-import * as fs from "fs";
-import { decompress } from "iltorb";
-import test from 'ava';
-import rimraf from "rimraf";
-import * as rollup from "rollup";
-import gzip from "../lib/index.cjs";
+const { decompress } = require('iltorb')
+const {describe,it,beforeEach,afterEach} = require('mocha')
+const chai = require('chai')
+const rimraf = require('rimraf')
+const {rollup} = require('rollup')
+const brotli = require('../lib/index.cjs')
+const {promisify} = require('util')
+const {writeFile, readFile, access} = require('fs')
+const readFileAsync = promisify(readFile)
+const writeFileAsync = promisify(writeFile)
+const decompressAsync = promisify(decompress)
+const rimrafAsync = promisify(rimraf)
+const accessAsync = promisify(access)
+const {expect} = chai
 
+describe('rollup-plugin-brotli', () => {
 
-function cleanup() {
-    return new Promise(resolve => {
-        rimraf('test/__output', () => resolve());
-    });
-}
+  beforeEach(() => rimrafAsync('test/__output'))
+  afterEach(() => rimrafAsync('test/__output'))
 
-function fileNotPresent(t, path) {
-    return new Promise(resolve => {
-        fs.stat(path, (err, stats) => {
-            if(!err) t.fail('File should not be present: ' + path);
-            resolve();
-        });
-    });
-}
+  it('has sensible defaults', async () => {
+    const bundle = await rollup({
+      input: 'test/sample/index.js',
+      plugins: [
+        brotli()
+      ]
+    })
+    await bundle.write({ 
+      file: 'test/__output/bundle.js',
+      format: 'iife',
+      sourceMap: true
+    })
+    const uncompressed = await readFileAsync('test/__output/bundle.js')
+    const compressed = await decompressAsync(await readFileAsync('test/__output/bundle.js.br'))
+    expect(uncompressed).to.eql(compressed)
+  })
 
-function compareFileWithGzip(t, path) {
-    return new Promise((resolve, reject) => {
-        fs.readFile(path, (err, bundleContent) => {
-            if(err) {
-                t.fail('Bundle not found!');
-                reject();
-                return;
-            }
-
-            fs.readFile(path + '.br', (err, gzipContent) => {
-                if(err) {
-                    t.fail('Gzip file not found!');
-                    reject();
-                    return;
-                }
-
-                decompress(gzipContent, (err, unzippedContent) => {
-                    t.deepEqual(unzippedContent, bundleContent);
-                    resolve();
-                });
-            });
-        });
-    });
-}
-
-
-test.beforeEach(() => cleanup());
-test.afterEach(() => cleanup());
-
-
-test.serial('without options', t => {
-    return rollup
-        .rollup({
-            entry: 'test/sample/index.js',
-            plugins: [
-                gzip()
-            ]
+  it('has sensible defaults', async () => {
+    const bundle = await rollup({
+      input: 'test/sample/index.js',
+      plugins: [
+        // file that is above the size option => gets compressed
+        {
+          name: 'test',
+          onwrite: (options, bundle) => writeFileAsync('test/__output/test1.txt', 'This is a test')
+        },
+        // short file that is below the size option => not compressed
+        {
+          name: 'test2',
+          onwrite: (options, bundle) => writeFileAsync('test/__output/test2.txt', 'Short')
+        },
+        brotli({
+          options: {
+            level: 9,
+          },
+          additional: [
+            'test/__output/test1.txt',
+            'test/__output/test2.txt',
+          ],
+          minSize: 10
         })
-        .then(bundle => {
-            return bundle.write({
-                dest: 'test/__output/bundle.js',
-                format: 'iife',
-                sourceMap: true
-            });
-        })
-        .then(() => compareFileWithGzip(t, 'test/__output/bundle.js'));
-});
+      ]
+    })
+    await bundle.write({ 
+      file: 'test/__output/bundle.js',
+      format: 'cjs',
+      sourceMap: true
+    })
+    const uncompressed = await readFileAsync('test/__output/bundle.js')
+    const compressed = await decompressAsync(await readFileAsync('test/__output/bundle.js.br'))
+    expect(uncompressed).to.eql(compressed)
+    const uncompressedTxt = await readFileAsync('test/__output/test1.txt')
+    const compressedTxt = await decompressAsync(await readFileAsync('test/__output/test1.txt.br'))
+    expect(uncompressedTxt).to.eql(compressedTxt)
+    let access = null
+    try {
+      access = await accessAsync(await readFileAsync('test/__output/test2.txt.br'))
+    } catch(e) {
+      access = null
+    }
+    expect(access).to.equal(null)
+  })
 
-
-test.serial('with options', t => {
-    return rollup
-        .rollup({
-            entry: 'test/sample/index.js',
-            plugins: [
-                // file that is above the size option => gets compressed
-                {
-                    name: 'test',
-                    onwrite: (options, bundle) => {
-                        return new Promise(resolve => {
-                            fs.writeFile('test/__output/test1.txt', 'This is a test', () => resolve());
-                        });
-                    }
-                },
-                // short file that is below the size option => not compressed
-                {
-                    name: 'test2',
-                    onwrite: (options, bundle) => {
-                        return new Promise(resolve => {
-                            fs.writeFile('test/__output/test2.txt', 'Short', () => resolve());
-                        });
-                    }
-                },
-                gzip({
-                    options: {
-                        level: 9
-                    },
-                    additional: [
-                        'test/__output/test1.txt',
-                        'test/__output/test2.txt',
-                    ],
-                    minSize: 10
-                })
-            ]
-        })
-        .then(bundle => {
-            return bundle.write({
-                dest: 'test/__output/bundle.js',
-                format: 'cjs'
-            });
-        })
-        .then(() => compareFileWithGzip(t, 'test/__output/bundle.js'))
-        .then(() => compareFileWithGzip(t, 'test/__output/test1.txt'))
-        .then(() => fileNotPresent(t, 'test/__output/test2.txt.gz'));
-});
+})
