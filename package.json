@@ -26,12 +26,12 @@
   },
   "homepage": "https://github.com/kryops/rollup-plugin-brotli#readme",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "mocha": "^5.1.0",
-    "rimraf": "^2.5.4",
-    "rollup": "^0.57.1"
+    "chai": "4.2.0",
+    "mocha": "6.1.4",
+    "rimraf": "2.6.3",
+    "rollup": "1.16.6"
   },
   "dependencies": {
-    "iltorb": "^2.3.0"
+    "iltorb": "2.4.3"
   }
 }
