@@ -1,3 +1,4 @@
+const {mkdirSync} = require('fs')
 const { decompress } = require('iltorb')
 const {describe,it,beforeEach,afterEach} = require('mocha')
 const chai = require('chai')
@@ -8,10 +9,17 @@ const {promisify} = require('util')
 const {writeFile, readFile, access} = require('fs')
 const readFileAsync = promisify(readFile)
 const writeFileAsync = promisify(writeFile)
-const decompressAsync = promisify(decompress)
 const rimrafAsync = promisify(rimraf)
 const accessAsync = promisify(access)
 const {expect} = chai
+
+// helper
+function _plugin(name, content) {
+  return {
+    name,
+    generateBundle: () => writeFileAsync(`test/__output/${name}.txt`, content)
+  }
+}
 
 describe('rollup-plugin-brotli', () => {
 
@@ -25,30 +33,25 @@ describe('rollup-plugin-brotli', () => {
         brotli()
       ]
     })
-    await bundle.write({ 
+    await bundle.write({
       file: 'test/__output/bundle.js',
       format: 'iife',
       sourceMap: true
     })
     const uncompressed = await readFileAsync('test/__output/bundle.js')
-    const compressed = await decompressAsync(await readFileAsync('test/__output/bundle.js.br'))
+    const compressed = await decompress(await readFileAsync('test/__output/bundle.js.br'))
     expect(uncompressed).to.eql(compressed)
   })
 
   it('has sensible defaults', async () => {
+    mkdirSync('test/__output', {recursive: true, mode: 0o755})
     const bundle = await rollup({
       input: 'test/sample/index.js',
       plugins: [
         // file that is above the size option => gets compressed
-        {
-          name: 'test',
-          onwrite: (options, bundle) => writeFileAsync('test/__output/test1.txt', 'This is a test')
-        },
+        _plugin('test1', 'This is a test'),
         // short file that is below the size option => not compressed
-        {
-          name: 'test2',
-          onwrite: (options, bundle) => writeFileAsync('test/__output/test2.txt', 'Short')
-        },
+        _plugin('test2', 'Short'),
         brotli({
           options: {
             level: 9,
@@ -61,16 +64,16 @@ describe('rollup-plugin-brotli', () => {
         })
       ]
     })
-    await bundle.write({ 
+    await bundle.write({
       file: 'test/__output/bundle.js',
       format: 'cjs',
       sourceMap: true
     })
     const uncompressed = await readFileAsync('test/__output/bundle.js')
-    const compressed = await decompressAsync(await readFileAsync('test/__output/bundle.js.br'))
+    const compressed = await decompress(await readFileAsync('test/__output/bundle.js.br'))
     expect(uncompressed).to.eql(compressed)
     const uncompressedTxt = await readFileAsync('test/__output/test1.txt')
-    const compressedTxt = await decompressAsync(await readFileAsync('test/__output/test1.txt.br'))
+    const compressedTxt = await decompress(await readFileAsync('test/__output/test1.txt.br'))
     expect(uncompressedTxt).to.eql(compressedTxt)
     let access = null
     try {
