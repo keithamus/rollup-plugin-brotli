@@ -8,6 +8,5 @@ npm-debug.log
 
 !.gitkeep
 
-lib/
 test/__output
 *.tgz
