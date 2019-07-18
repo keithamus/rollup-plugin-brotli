@@ -29,7 +29,7 @@
     "chai": "4.2.0",
     "mocha": "6.1.4",
     "rimraf": "2.6.3",
-    "rollup": "1.16.6"
+    "rollup": "1.17.0"
   },
   "dependencies": {
     "iltorb": "2.4.3"
