@@ -1,5 +1,5 @@
 const {mkdirSync} = require('fs')
-const { decompress } = require('iltorb')
+const { brotliDecompress } = require('zlib')
 const {describe,it,beforeEach,afterEach} = require('mocha')
 const chai = require('chai')
 const rimraf = require('rimraf')
@@ -11,6 +11,7 @@ const readFileAsync = promisify(readFile)
 const writeFileAsync = promisify(writeFile)
 const rimrafAsync = promisify(rimraf)
 const accessAsync = promisify(access)
+const decompress = promisify(brotliDecompress)
 const {expect} = chai
 
 // helper

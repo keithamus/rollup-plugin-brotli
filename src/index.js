@@ -1,6 +1,6 @@
-import { compressStream } from 'iltorb'
 import fs from 'fs'
 import {join, dirname} from 'path'
+import {createBrotliCompress} from 'zlib'
 
 function brotliCompressFile(file, options, minSize) {
   return new Promise(resolve => {
@@ -15,7 +15,7 @@ function brotliCompressFile(file, options, minSize) {
         resolve()
       } else {
         fs.createReadStream(file)
-          .pipe(compressStream(options))
+          .pipe(createBrotliCompress(options))
           .pipe(fs.createWriteStream(file + '.br'))
           .on('close', () => resolve())
       }
@@ -23,15 +23,12 @@ function brotliCompressFile(file, options, minSize) {
   })
 }
 
-export default function brotli(options) {
+export default function brotli(options = {}) {
   let _dir = ''
   options = Object.assign({
     additional: [],
     minSize: 0,
-    options: Object.assign({
-      level: 11,
-      mode: 1,
-    }, (options || {}).options || {})
+    options: {},
   }, options)
   return {
     name: 'brotli',

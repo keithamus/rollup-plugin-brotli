@@ -2,7 +2,9 @@
 
 Creates a compressed `.br` artifact for your Rollup bundle.
 
-All credit goes to [@kryops](https://github.com/kryops) with https://github.com/kryops/rollup-plugin-gzip. This just changes `zlib` to `brotli` and adds the additional (`iltorb`) dependency.
+This uses the built in Node Brotli APIs, and as such requires Node v11.7.0 or higher
+
+Based off of [@kryops](https://github.com/kryops)' [rollup-plugin-gzip](https://github.com/kryops/rollup-plugin-gzip).
 
 ## Installation
 
@@ -31,24 +33,25 @@ rollup({
 brotli({
     options: {
         mode: 0 // "generic mode"
-        // ...
+        level: 7 // turn down the quality, resulting in a faster compression
+        // ... see all options https://nodejs.org/api/zlib.html#zlib_zlib_createbrotlicompress_options
     },
     additional: [
+        //  Manually list more files to compress alongside.
         'dist/bundle.css'
     ],
+    // Ignore files smaller than this
     minSize: 1000
 })
 ```
 
 **options**: Brotli compression options
 
-The options available are the [standard options for the `iltorb` module](https://github.com/mayhemydg/iltorb#brotliparams).
+The options available are the [standard options for the `zlib.createBrotliCompress` builtin](https://nodejs.org/api/zlib.html#zlib_class_options).
 
 **additional**: Compress additional files
 
 This option allows you to compress additional files that were created by other Rollup plugins.
-
-As the `onwrite` callback for all plugins is executed in the same order they are listed in the `plugins` array, this might only work if the brotli plugin is positioned after all other plugins that create additional files.
 
 **minSize**: Minimum size for compression
 
