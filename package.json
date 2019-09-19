@@ -31,5 +31,8 @@
     "rimraf": "^3.0.0",
     "rollup": "^1.21.4"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "engines": {
+    "node": ">=11.7.0"
+  }
 }
