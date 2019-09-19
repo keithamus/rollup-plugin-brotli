@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/kryops/rollup-plugin-brotli.git"
+    "url": "git+ssh://git@github.com/keithamus/rollup-plugin-brotli.git"
   },
   "author": "Michael Strobel <michael@kryops.de>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kryops/rollup-plugin-brotli/issues"
+    "url": "https://github.com/keithamus/rollup-plugin-brotli/issues"
   },
-  "homepage": "https://github.com/kryops/rollup-plugin-brotli#readme",
+  "homepage": "https://github.com/keithamus/rollup-plugin-brotli#readme",
   "devDependencies": {
     "chai": "4.2.0",
     "mocha": "^6.2.0",
