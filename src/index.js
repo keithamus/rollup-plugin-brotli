@@ -55,7 +55,7 @@ export default function brotli(options = {}) {
     generateBundle: buildOpts => {
       _dir = (buildOpts.file && dirname(buildOpts.file)) || buildOpts.dir || ''
     },
-    writeBundle: async bundle => {
+    writeBundle: async (outputOptions, bundle) => {
       const compressCollection = []
       const bundlesToCompress = Object.keys(bundle).filter(file => !isCompressed(bundle[file]))
       const files = [...options.additional, ...bundlesToCompress.map(f => join(_dir, f))]
