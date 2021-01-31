@@ -15,7 +15,7 @@ function isCompressed (bundle) {
     let matches = true
     const sourceBytes = bundle.type === 'asset' ? bundle.source : Buffer.from(bundle.code)
     for (let i = 0; i < bytes.length; ++i) {
-      matches = matches && bytes[0] === sourceBytes[0]
+      matches = matches && bytes[i] === sourceBytes[i]
     }
     if (matches) return true
   }
