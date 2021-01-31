@@ -7,4 +7,3 @@ npm-debug.log
 *.tgz
 
 test/
-rollup.config.js
