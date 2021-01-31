@@ -30,11 +30,14 @@ rollup({
 ### Configuration
 
 ```js
+import zlib from "zlib";
 brotli({
     options: {
-        mode: 0 // "generic mode"
-        level: 7 // turn down the quality, resulting in a faster compression
-        // ... see all options https://nodejs.org/api/zlib.html#zlib_zlib_createbrotlicompress_options
+        params: {
+            [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_MODE_GENERIC,
+            [zlib.constants.BROTLI_PARAM_QUALITY]: 7 // turn down the quality, resulting in a faster compression (default is 11)
+        }
+        // ... see all options https://nodejs.org/api/zlib.html#zlib_class_brotlioptions
     },
     additional: [
         //  Manually list more files to compress alongside.
@@ -47,7 +50,7 @@ brotli({
 
 **options**: Brotli compression options
 
-The options available are the [standard options for the `zlib.createBrotliCompress` builtin](https://nodejs.org/api/zlib.html#zlib_class_options).
+The options available are the [standard options for the `zlib.createBrotliCompress` builtin](https://nodejs.org/api/zlib.html#zlib_class_brotlioptions).
 
 **additional**: Compress additional files
 
