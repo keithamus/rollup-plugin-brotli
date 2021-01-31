@@ -10,7 +10,7 @@ const magicBytes = [
 ]
 
 function isCompressed (bundle) {
-  if (/\.(gz|zip|xz|lz2|7z)$/.test(bundle.fileName)) return true
+  if (/\.(gz|zip|xz|lz2|7z|woff|woff2)$/.test(bundle.fileName)) return true
   for (const bytes of magicBytes) {
     let matches = true
     const sourceBytes = bundle.type === 'asset' ? bundle.source : Buffer.from(bundle.code)
