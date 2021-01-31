@@ -10,12 +10,12 @@ const magicBytes = [
 ]
 
 function isCompressed (bundle) {
-  if (/\.(gz|zip|xz|lz2|7z)$/.test(bundle.fileName)) return true
+  if (/\.(gz|zip|xz|lz2|7z|woff|woff2|jpg|jpeg|png|webp)$/.test(bundle.fileName)) return true
   for (const bytes of magicBytes) {
     let matches = true
     const sourceBytes = bundle.type === 'asset' ? bundle.source : Buffer.from(bundle.code)
     for (let i = 0; i < bytes.length; ++i) {
-      matches = matches && bytes[0] === sourceBytes[0]
+      matches = matches && bytes[i] === sourceBytes[i]
     }
     if (matches) return true
   }
@@ -57,7 +57,7 @@ export default function brotli(options = {}) {
     },
     writeBundle: async (outputOptions, bundle) => {
       const compressCollection = []
-      const bundlesToCompress = Object.keys(bundle).filter(file => !isCompressed(bundle[file]))
+      const bundlesToCompress = Object.keys(bundle).filter(id => !isCompressed(bundle[id])).map(id => bundle[id].fileName)
       const files = [...options.additional, ...bundlesToCompress.map(f => join(_dir, f))]
       for (const file of files) {
         compressCollection.push(brotliCompressFile(file, options.options, options.minSize))
