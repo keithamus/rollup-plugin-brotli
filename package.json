@@ -28,7 +28,7 @@
   "homepage": "https://github.com/keithamus/rollup-plugin-brotli#readme",
   "devDependencies": {
     "chai": "4.2.0",
-    "mocha": "^6.2.0",
+    "mocha": "^8.2.1",
     "rimraf": "^3.0.0",
     "rollup": "^2.0.0"
   },
