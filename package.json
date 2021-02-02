@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-brotli",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "Compress your Rollup bundle with Brotli",
   "keywords": [
     "rollup",
