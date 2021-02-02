@@ -46,6 +46,7 @@ function brotliCompressFile(file, options, minSize) {
 export default function brotli(options = {}) {
   let _dir = ''
   options = Object.assign({
+    test: /\.(js|css|html|txt|xml|json|svg|ico|ttf|otf|eot)$/,
     additional: [],
     minSize: 0,
     options: {},
@@ -57,7 +58,11 @@ export default function brotli(options = {}) {
     },
     writeBundle: async (outputOptions, bundle) => {
       const compressCollection = []
-      const bundlesToCompress = Object.keys(bundle).filter(id => !isCompressed(bundle[id])).map(id => bundle[id].fileName)
+      const bundlesToCompress = 
+        Object.keys(bundle)
+          .filter(id => options.test.test(bundle[id].fileName))
+          .filter(id => !isCompressed(bundle[id]))
+          .map(id => bundle[id].fileName)
       const files = [...options.additional, ...bundlesToCompress.map(f => join(_dir, f))]
       for (const file of files) {
         compressCollection.push(brotliCompressFile(file, options.options, options.minSize))

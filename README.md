@@ -32,6 +32,7 @@ rollup({
 ```js
 import zlib from "zlib";
 brotli({
+    test: /\.(js|css|html|txt|xml|json|svg|ico|ttf|otf|eot)$/, // file extensions to compress (default is shown)
     options: {
         params: {
             [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_MODE_GENERIC,
